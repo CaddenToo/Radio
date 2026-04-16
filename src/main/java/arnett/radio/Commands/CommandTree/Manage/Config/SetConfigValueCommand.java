@@ -29,7 +29,8 @@ public class SetConfigValueCommand implements SubCommand {
     @Override
     public boolean execute(Player player, String[] args, int level) {
 
-        SubCommand.super.execute(player, args, level);
+        if (SubCommand.super.execute(player, args, level))
+            return false;
 
         int index;
         //this part is pretty expense, but it's rarely intended to run so it's fine

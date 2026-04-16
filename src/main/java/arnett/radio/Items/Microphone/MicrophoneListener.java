@@ -1,5 +1,6 @@
 package arnett.radio.Items.Microphone;
 
+import arnett.customItemsAPI.Helpers.WorldGuardHelper;
 import arnett.radio.Frequencies.FrequencyManager;
 import arnett.radio.Items.CustomItemManager;
 import arnett.radio.Items.Speaker.Speaker;
@@ -36,8 +37,17 @@ public class MicrophoneListener implements Listener {
     @EventHandler
     public void onBlockPlaced(BlockPlaceEvent e)
     {
+        if(e.isCancelled())
+            return;
+
         if(!Microphone.isMicrophone(e.getItemInHand()))
             return;
+
+        if(!WorldGuardHelper.canWorldGuardBuild(e.getPlayer(), e.getBlock().getLocation()))
+        {
+            e.setCancelled(true);
+            return;
+        }
 
         String frequency = FrequencyManager.getFrequency(e.getItemInHand());
 
@@ -174,6 +184,13 @@ public class MicrophoneListener implements Listener {
         //was it the speaker which was damaged
         if(!e.getEntity().getPersistentDataContainer().has(Microphone.microphoneIdentifierKey))
             return;
+
+
+        if(e.getDamager() instanceof Player player && !WorldGuardHelper.canWorldGuardBreak(player, e.getEntity().getLocation()))
+        {
+            e.setCancelled(true);
+            return;
+        }
 
         //was it by a player or explosion?
         if(!(e.getCause() == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) &&

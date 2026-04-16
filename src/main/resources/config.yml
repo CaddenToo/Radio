@@ -29,7 +29,7 @@ frequency-representation:
 preset-audio:
   # this will play "Rift.wav" on the RED/RED/RED/RED frequency
   # must use what was set as the frequency separating-string here
-  RED/RED/RED/RED: "Rift.wav"
+  # RED/RED/RED/RED: "Rift.wav"
 
 # Field Radio
 fieldradio:
@@ -56,7 +56,7 @@ fieldradio:
 
     # Crafting the radio
     basic:
-      enabled: true
+      enabled: false
 
       # # Use 0-9 used for frequencies,
       # Recommended to use 2 frequencies for this
@@ -104,7 +104,7 @@ speaker:
 
   recipe:
     basic:
-      enabled: true
+      enabled: false
 
       # Use 0-9 used for frequencies
       # Recommended to have only one frequency for this
@@ -172,7 +172,7 @@ microphone:
 
   recipe:
     basic:
-      enabled: true
+      enabled: false
 
       # Use 0-9 used for frequencies
       # Recommended to have only one frequency for this

@@ -12,6 +12,8 @@ public class GiveMicrophoneCommand implements SubCommand {
 
     @Override
     public boolean execute(Player player, String[] args, int level) {
+        if (SubCommand.super.execute(player, args, level))
+            return true;
         if(args.length <= level)
         {
             //no frequency provided

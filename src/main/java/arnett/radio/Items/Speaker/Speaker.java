@@ -14,6 +14,7 @@ import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.Equippable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.*;
@@ -61,7 +62,7 @@ public class Speaker {
 
             ingredients.forEach(i -> {
                 //special case RADIO
-                if(i.equals("SPEAKER"))
+                if(i.equals("SPE    AKER"))
                     recipe.addIngredient(RadioConfig.speaker_block_headType);
 
                     //special case DYE for frequency
@@ -160,7 +161,6 @@ public class Speaker {
         ItemStack speaker = new ItemStack(RadioConfig.speaker_entity_baseMaterial);
 
         //sets Item visuals
-        speaker.setData(DataComponentTypes.ITEM_NAME, Component.text("Speaker", NamedTextColor.YELLOW));
         speaker.setData(DataComponentTypes.ITEM_MODEL, speakerModelKey);
 
         //Adds Identifier tag
@@ -176,7 +176,7 @@ public class Speaker {
         //removes jukebox functionality
         speaker.unsetData(DataComponentTypes.JUKEBOX_PLAYABLE);
 
-        speaker.setData(DataComponentTypes.ITEM_NAME, Component.text("Speaker"));
+        speaker.setData(DataComponentTypes.ITEM_NAME, Component.text("Radio", NamedTextColor.YELLOW));
 
         return speaker;
     }

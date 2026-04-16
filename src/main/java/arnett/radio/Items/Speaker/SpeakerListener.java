@@ -1,5 +1,6 @@
 package arnett.radio.Items.Speaker;
 
+import arnett.customItemsAPI.Helpers.WorldGuardHelper;
 import arnett.radio.Frequencies.FrequencyManager;
 import arnett.radio.Items.CustomItemManager;
 import arnett.radio.Radio;
@@ -38,6 +39,18 @@ public class SpeakerListener implements Listener {
     @EventHandler
     public void onBlockPlaced(BlockPlaceEvent e)
     {
+        if(e.isCancelled())
+            return;
+
+        if(!Speaker.isSpeaker(e.getItemInHand()))
+            return;
+
+        if(!WorldGuardHelper.canWorldGuardBuild(e.getPlayer(), e.getBlock().getLocation()))
+        {
+            e.setCancelled(true);
+            return;
+        }
+
         //are we even using blocks for this project
         if(RadioConfig.speaker_useEntity)
         {
@@ -559,6 +572,10 @@ public class SpeakerListener implements Listener {
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+
+        if(e.isCancelled())
+            return;
+
         //was it the speaker which was damaged
         if(!e.getEntity().getPersistentDataContainer().has(Speaker.speakerIdentifierKey))
             return;
@@ -567,6 +584,13 @@ public class SpeakerListener implements Listener {
         if(!(e.getCause() == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) &&
                 !(e.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) &&
                 !(e.getDamager() instanceof Player player)){
+            return;
+        }
+
+
+        if(e.getDamager() instanceof Player player && !WorldGuardHelper.canWorldGuardBreak(player, e.getEntity().getLocation()))
+        {
+            e.setCancelled(true);
             return;
         }
 

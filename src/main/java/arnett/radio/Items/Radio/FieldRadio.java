@@ -6,6 +6,7 @@ import arnett.radio.Radio;
 import com.destroystokyo.paper.MaterialTags;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.Consumable;
+import io.papermc.paper.datacomponent.item.JukeboxPlayable;
 import io.papermc.paper.datacomponent.item.consumable.ItemUseAnimation;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -14,6 +15,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.*;
+import org.bukkit.inventory.meta.components.JukeboxPlayableComponent;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
@@ -95,6 +97,7 @@ public class FieldRadio {
 
         radio.editMeta(meta -> {
             meta.getUseCooldown().setCooldownSeconds(5f);
+            meta.setJukeboxPlayable(null);
         });
 
         //removes jukebox functionality

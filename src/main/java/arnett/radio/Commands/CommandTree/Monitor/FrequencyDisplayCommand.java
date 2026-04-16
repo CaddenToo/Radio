@@ -38,7 +38,8 @@ public class FrequencyDisplayCommand implements SubCommand {
     public boolean execute(Player player, String[] args, int level) {
 
         //this is just a permission check
-        SubCommand.super.execute(player, args, level);
+        if (SubCommand.super.execute(player, args, level))
+            return true;
 
         //monitoring frequency
         StringBuilder argFrequency = new StringBuilder();
