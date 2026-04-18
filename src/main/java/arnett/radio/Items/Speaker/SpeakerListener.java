@@ -3,6 +3,7 @@ package arnett.radio.Items.Speaker;
 import arnett.customItemsAPI.Helpers.WorldGuardHelper;
 import arnett.radio.Frequencies.FrequencyManager;
 import arnett.radio.Items.CustomItemManager;
+import arnett.radio.Items.Microphone.Microphone;
 import arnett.radio.Radio;
 import arnett.radio.RadioConfig;
 import arnett.radio.RadioVoiceChat;
@@ -30,12 +31,16 @@ import org.bukkit.event.world.EntitiesUnloadEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.UUID;
 
 @SuppressWarnings("UnstableApiUsage")
 public class SpeakerListener implements Listener {
+    private static final Logger log = LoggerFactory.getLogger(SpeakerListener.class);
+
     @EventHandler
     public void onBlockPlaced(BlockPlaceEvent e)
     {
@@ -634,10 +639,6 @@ public class SpeakerListener implements Listener {
     @EventHandler
     public void onItemCraftered(CrafterCraftEvent e)
     {
-        if (!Speaker.isSpeaker(e.getRecipe().getResult()))
-            //not radio recipe so skip
-            return;
-
         ItemStack result = e.getResult();
 
         //returns what is put in the crafting interface
@@ -651,27 +652,44 @@ public class SpeakerListener implements Listener {
         }
 
         //retuning
-        else if(e.getRecipe().getKey().equals(Speaker.speakerRetuneKey))
+        else if(e.getRecipe().getKey().equals(Speaker.speakerRetuneKey) || e.getRecipe().getKey().equals(Microphone.microphoneRetuneKey))
         {
-            //update result
-            e.setResult(FrequencyManager.addFrequencyToCraft(result, mtx));
-        }
+            boolean hasSpeaker = false;
+            boolean isMic = false;
 
-        //Rut-roh!
-        else {
-            Radio.logger.warning("COULD NOT FIND FIELD-RADIO CRAFTER RECIPE");
+            //check if the dark oak is actually a microphone
+            for(ItemStack stack : mtx)
+            {
+                if(Speaker.isSpeaker(stack))
+                {
+                    hasSpeaker = true;
+                    break;
+                }
+                else if (Microphone.isMicrophone(stack))
+                {
+                    isMic = true;
+                    hasSpeaker = true;
+                    break;
+                }
+            }
+
+            if(!hasSpeaker)
+            {
+                e.setResult(ItemStack.of(Material.AIR));
+                return;
+            }
+
+            //update result
+            e.setResult(FrequencyManager.addFrequencyToCraft(isMic ? Microphone.getMicrophone() : Speaker.getSpeaker(), mtx));
         }
     }
 
     @EventHandler
     public void onCraftPrepared(PrepareItemCraftEvent e)
     {
+
         if(e.getRecipe() == null)
             //invalid recipe so skip
-            return;
-
-        if (!Speaker.isSpeaker(e.getRecipe().getResult()))
-            //not radio recipe so skip
             return;
 
         if(!(e.getRecipe() instanceof Keyed keyedRecipe))
@@ -688,15 +706,35 @@ public class SpeakerListener implements Listener {
             e.getInventory().setResult(FrequencyManager.addFrequencyToCraft(result, mtx, RadioConfig.speaker_recipe_basic_shape));
         }
 
-        else if(keyedRecipe.getKey().equals(Speaker.speakerRetuneKey))
+        else if(keyedRecipe.getKey().equals(Speaker.speakerRetuneKey) || keyedRecipe.getKey().equals(Microphone.microphoneRetuneKey))
         {
-            //update result
-            e.getInventory().setResult(FrequencyManager.addFrequencyToCraft(result, mtx));
-        }
+            boolean hasSpeaker = false;
+            boolean isMic = false;
 
-        //Rut-roh!
-        else {
-            Radio.logger.warning("COULD NOT FIND SPEAKER CRAFT RECIPE");
+            //check if the dark oak is actually a microphone
+            for(ItemStack stack : mtx)
+            {
+                if(Speaker.isSpeaker(stack))
+                {
+                    hasSpeaker = true;
+                    break;
+                }
+                else if (Microphone.isMicrophone(stack))
+                {
+                    isMic = true;
+                    hasSpeaker = true;
+                    break;
+                }
+            }
+
+            if(!hasSpeaker)
+            {
+                e.getInventory().setResult(ItemStack.of(Material.AIR));
+                return;
+            }
+
+            //update result
+            e.getInventory().setResult(FrequencyManager.addFrequencyToCraft(isMic ? Microphone.getMicrophone() : Speaker.getSpeaker(), mtx));
         }
     }
 

@@ -13,6 +13,7 @@ import de.maxhenkel.voicechat.api.packets.MicrophonePacket;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.minecraft.ChatFormatting;
 import org.bukkit.Bukkit;
@@ -170,7 +171,9 @@ public class FrequencyManager {
 
         tagFrequency(result, frequency.toString());
 
-        result.lore(List.of(Component.text(displayFrequency.toString())));
+        result.lore(List.of(Component.text(
+                displayFrequency.toString()
+        ), Component.text("Craft With Dye to Retune Frequency", NamedTextColor.GOLD)));
 
         return result;
     }
@@ -208,7 +211,9 @@ public class FrequencyManager {
 
         tagFrequency(result, frequency.toString());
 
-        result.lore(List.of(Component.text(displayFrequency.toString())));
+        result.lore(List.of(Component.text(
+                displayFrequency.toString()
+        ), Component.text("Craft With Dye to Retune Frequency", NamedTextColor.GOLD)));
 
         return result;
     }
@@ -255,6 +260,10 @@ public class FrequencyManager {
         String mainFq = frequency.substring(0, splitFirstIndex);
 
         try {
+            //thirst
+            if(mainFq .equalsIgnoreCase("blue"))
+                return BossBar.Color.WHITE;
+
             return BossBar.Color.valueOf(mainFq);
         }
         catch (Exception e)
@@ -509,8 +518,6 @@ public class FrequencyManager {
 
             channelId = idBuilder.toString();
             channelName = sender.getName();
-
-            Radio.logger.info(channelId);
         }
 
         // create the volume category for speakers.

@@ -287,10 +287,6 @@ public class MicrophoneListener implements Listener {
     @EventHandler
     public void onItemCraftered(CrafterCraftEvent e)
     {
-        if (!Microphone.isMicrophone(e.getRecipe().getResult()))
-            //not radio recipe so skip
-            return;
-
         ItemStack result = e.getResult();
 
         //returns what is put in the crafting interface
@@ -302,18 +298,6 @@ public class MicrophoneListener implements Listener {
             //update result
             e.setResult(FrequencyManager.addFrequencyToCraft(result, mtx, RadioConfig.microphone_recipe_basic_shape));
         }
-
-        //retuning
-        else if(e.getRecipe().getKey().equals(Speaker.speakerRetuneKey))
-        {
-            //update result
-            e.setResult(FrequencyManager.addFrequencyToCraft(result, mtx));
-        }
-
-        //Rut-roh!
-        else {
-            Radio.logger.warning("COULD NOT FIND FIELD-RADIO CRAFTER RECIPE");
-        }
     }
 
     @EventHandler
@@ -321,10 +305,6 @@ public class MicrophoneListener implements Listener {
     {
         if(e.getRecipe() == null)
             //invalid recipe so skip
-            return;
-
-        if (!Microphone.isMicrophone(e.getRecipe().getResult()))
-            //not radio recipe so skip
             return;
 
         if(!(e.getRecipe() instanceof Keyed keyedRecipe))
@@ -339,17 +319,6 @@ public class MicrophoneListener implements Listener {
         {
             //update result
             e.getInventory().setResult(FrequencyManager.addFrequencyToCraft(result, mtx, RadioConfig.microphone_recipe_basic_shape));
-        }
-
-        else if(keyedRecipe.getKey().equals(Microphone.microphoneRetuneKey))
-        {
-            //update result
-            e.getInventory().setResult(FrequencyManager.addFrequencyToCraft(result, mtx));
-        }
-
-        //Rut-roh!
-        else {
-            Radio.logger.warning("COULD NOT FIND MICROPHONE CRAFT RECIPE");
         }
     }
 }

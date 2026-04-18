@@ -62,8 +62,8 @@ public class Speaker {
 
             ingredients.forEach(i -> {
                 //special case RADIO
-                if(i.equals("SPE    AKER"))
-                    recipe.addIngredient(RadioConfig.speaker_block_headType);
+                if(i.equals("SPEAKER"))
+                    recipe.addIngredient(RadioConfig.speaker_useEntity ? RadioConfig.speaker_entity_baseMaterial : RadioConfig.speaker_block_headType);
 
                     //special case DYE for frequency
                 else if (i.equals("DYE"))
@@ -99,7 +99,9 @@ public class Speaker {
             pdc.set(FrequencyManager.radioFrequencyKey, PersistentDataType.STRING, frequency);
         });
 
-        speaker.lore(List.of(Component.text(FrequencyManager.convertToDisplayFrequency(frequency))));
+        speaker.lore(List.of(Component.text(FrequencyManager.convertToDisplayFrequency(frequency)),
+                Component.text("Craft With Dye to Retune Frequency", NamedTextColor.GOLD)
+        ));
 
         return speaker;
     }

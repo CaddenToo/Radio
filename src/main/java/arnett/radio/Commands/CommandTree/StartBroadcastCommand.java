@@ -98,8 +98,6 @@ public class StartBroadcastCommand implements SubCommand {
 
     public List<String> getAudioFiles(File directory) {
 
-        System.out.println(directory.toPath());
-
         //go though the file tree and find audio files
         try (Stream<Path> walk = Files.walk(directory.toPath())) {
             return walk

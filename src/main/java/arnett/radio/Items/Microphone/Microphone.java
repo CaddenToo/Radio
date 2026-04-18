@@ -100,7 +100,8 @@ public class Microphone {
             pdc.set(FrequencyManager.radioFrequencyKey, PersistentDataType.STRING, frequency);
         });
 
-        speaker.lore(List.of(Component.text(FrequencyManager.convertToDisplayFrequency(frequency))));
+        speaker.lore(List.of(Component.text(FrequencyManager.convertToDisplayFrequency(frequency)),
+                Component.text("Craft With Dye to Retune Frequency", NamedTextColor.GOLD)));
 
         return speaker;
     }
@@ -129,6 +130,9 @@ public class Microphone {
 
     public static boolean isMicrophone(ItemStack item)
     {
+        if(item == null)
+            return false;
+
         if(item.getType() != RadioConfig.microphone_entity_baseMaterial)
             return false;
 

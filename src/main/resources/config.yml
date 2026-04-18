@@ -189,7 +189,7 @@ microphone:
     retune:
       enabled: true
 
-      # Use SPEAKER for radio and DYE for frequencies
+      # Use MICROPHONE for radio and DYE for frequencies
       ingredients:
         - "MICROPHONE"
         - "DYE"
