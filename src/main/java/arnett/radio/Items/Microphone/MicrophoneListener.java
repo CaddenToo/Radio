@@ -1,5 +1,6 @@
 package arnett.radio.Items.Microphone;
 
+import arnett.customItemsAPI.Helpers.WorldGuardHelper;
 import arnett.radio.Frequencies.FrequencyManager;
 import arnett.radio.Items.CustomItemManager;
 import arnett.radio.Items.Speaker.Speaker;
@@ -36,8 +37,17 @@ public class MicrophoneListener implements Listener {
     @EventHandler
     public void onBlockPlaced(BlockPlaceEvent e)
     {
+        if(e.isCancelled())
+            return;
+
         if(!Microphone.isMicrophone(e.getItemInHand()))
             return;
+
+        if(!WorldGuardHelper.canWorldGuardBuild(e.getPlayer(), e.getBlock().getLocation()))
+        {
+            e.setCancelled(true);
+            return;
+        }
 
         String frequency = FrequencyManager.getFrequency(e.getItemInHand());
 
@@ -175,6 +185,13 @@ public class MicrophoneListener implements Listener {
         if(!e.getEntity().getPersistentDataContainer().has(Microphone.microphoneIdentifierKey))
             return;
 
+
+        if(e.getDamager() instanceof Player player && !WorldGuardHelper.canWorldGuardBreak(player, e.getEntity().getLocation()))
+        {
+            e.setCancelled(true);
+            return;
+        }
+
         //was it by a player or explosion?
         if(!(e.getCause() == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) &&
                 !(e.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) &&
@@ -270,10 +287,6 @@ public class MicrophoneListener implements Listener {
     @EventHandler
     public void onItemCraftered(CrafterCraftEvent e)
     {
-        if (!Microphone.isMicrophone(e.getRecipe().getResult()))
-            //not radio recipe so skip
-            return;
-
         ItemStack result = e.getResult();
 
         //returns what is put in the crafting interface
@@ -285,18 +298,6 @@ public class MicrophoneListener implements Listener {
             //update result
             e.setResult(FrequencyManager.addFrequencyToCraft(result, mtx, RadioConfig.microphone_recipe_basic_shape));
         }
-
-        //retuning
-        else if(e.getRecipe().getKey().equals(Speaker.speakerRetuneKey))
-        {
-            //update result
-            e.setResult(FrequencyManager.addFrequencyToCraft(result, mtx));
-        }
-
-        //Rut-roh!
-        else {
-            Radio.logger.warning("COULD NOT FIND FIELD-RADIO CRAFTER RECIPE");
-        }
     }
 
     @EventHandler
@@ -304,10 +305,6 @@ public class MicrophoneListener implements Listener {
     {
         if(e.getRecipe() == null)
             //invalid recipe so skip
-            return;
-
-        if (!Microphone.isMicrophone(e.getRecipe().getResult()))
-            //not radio recipe so skip
             return;
 
         if(!(e.getRecipe() instanceof Keyed keyedRecipe))
@@ -322,17 +319,6 @@ public class MicrophoneListener implements Listener {
         {
             //update result
             e.getInventory().setResult(FrequencyManager.addFrequencyToCraft(result, mtx, RadioConfig.microphone_recipe_basic_shape));
-        }
-
-        else if(keyedRecipe.getKey().equals(Microphone.microphoneRetuneKey))
-        {
-            //update result
-            e.getInventory().setResult(FrequencyManager.addFrequencyToCraft(result, mtx));
-        }
-
-        //Rut-roh!
-        else {
-            Radio.logger.warning("COULD NOT FIND MICROPHONE CRAFT RECIPE");
         }
     }
 }

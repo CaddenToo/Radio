@@ -14,6 +14,7 @@ import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.Equippable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.*;
@@ -62,7 +63,7 @@ public class Speaker {
             ingredients.forEach(i -> {
                 //special case RADIO
                 if(i.equals("SPEAKER"))
-                    recipe.addIngredient(RadioConfig.speaker_block_headType);
+                    recipe.addIngredient(RadioConfig.speaker_useEntity ? RadioConfig.speaker_entity_baseMaterial : RadioConfig.speaker_block_headType);
 
                     //special case DYE for frequency
                 else if (i.equals("DYE"))
@@ -98,7 +99,9 @@ public class Speaker {
             pdc.set(FrequencyManager.radioFrequencyKey, PersistentDataType.STRING, frequency);
         });
 
-        speaker.lore(List.of(Component.text(FrequencyManager.convertToDisplayFrequency(frequency))));
+        speaker.lore(List.of(Component.text(FrequencyManager.convertToDisplayFrequency(frequency)),
+                Component.text("Craft With Dye to Retune Frequency", NamedTextColor.GOLD)
+        ));
 
         return speaker;
     }
@@ -160,7 +163,6 @@ public class Speaker {
         ItemStack speaker = new ItemStack(RadioConfig.speaker_entity_baseMaterial);
 
         //sets Item visuals
-        speaker.setData(DataComponentTypes.ITEM_NAME, Component.text("Speaker", NamedTextColor.YELLOW));
         speaker.setData(DataComponentTypes.ITEM_MODEL, speakerModelKey);
 
         //Adds Identifier tag
@@ -176,7 +178,7 @@ public class Speaker {
         //removes jukebox functionality
         speaker.unsetData(DataComponentTypes.JUKEBOX_PLAYABLE);
 
-        speaker.setData(DataComponentTypes.ITEM_NAME, Component.text("Speaker"));
+        speaker.setData(DataComponentTypes.ITEM_NAME, Component.text("Radio", NamedTextColor.YELLOW));
 
         return speaker;
     }

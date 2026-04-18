@@ -13,7 +13,8 @@ public class ReloadConfigCommand implements SubCommand {
     @Override
     public boolean execute(Player player, String[] args, int level) {
 
-        SubCommand.super.execute(player, args, level);
+        if (SubCommand.super.execute(player, args, level))
+            return true;
 
         Radio.singleton.reloadConfig();
 

@@ -1,18 +1,16 @@
 package arnett.radio.Commands;
 
+import arnett.radio.Commands.CommandTree.*;
 import arnett.radio.Commands.CommandTree.Give.GiveFieldRadioCommand;
 import arnett.radio.Commands.CommandTree.Give.GiveMicrophoneCommand;
 import arnett.radio.Commands.CommandTree.Give.GiveSpeakerCommand;
-import arnett.radio.Commands.CommandTree.GiveBranch;
 import arnett.radio.Commands.CommandTree.Manage.Config.SaveConfigCommand;
 import arnett.radio.Commands.CommandTree.Manage.Config.SetConfigValueCommand;
 import arnett.radio.Commands.CommandTree.Manage.ConfigBranch;
 import arnett.radio.Commands.CommandTree.Manage.RefreshConnectionsCommand;
 import arnett.radio.Commands.CommandTree.Manage.Config.ReloadConfigCommand;
-import arnett.radio.Commands.CommandTree.ManageBranch;
 import arnett.radio.Commands.CommandTree.Monitor.FrequencyDisplayCommand;
 import arnett.radio.Commands.CommandTree.Monitor.ListActiveCodersCommand;
-import arnett.radio.Commands.CommandTree.MonitorBranch;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.command.Command;
@@ -42,6 +40,10 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             switch(s)
             {
                 case "none" -> {
+                    subCommands.add(new StartBroadcastCommand());
+                    subCommands.add(new StopBroadcastCommand());
+                    subCommands.add(new PauseBroadcastCommand());
+                    subCommands.add(new ResumeBroadcastCommand());
                     subCommands.add(new GiveBranch(new HashMap<>(Map.of(
 
                             new GiveFieldRadioCommand(), "none",

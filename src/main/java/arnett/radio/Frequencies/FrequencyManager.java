@@ -13,6 +13,7 @@ import de.maxhenkel.voicechat.api.packets.MicrophonePacket;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.minecraft.ChatFormatting;
 import org.bukkit.Bukkit;
@@ -26,19 +27,8 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.persistence.PersistentDataType;
-import org.checkerframework.checker.units.qual.A;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.ShortBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -87,32 +77,46 @@ public class FrequencyManager {
             // try to load the audio file
             try {
 
-                //get the audio file
-                AudioInputStream rawAudio = AudioSystem.getAudioInputStream(new File(Radio.singleton.getDataFolder(), fileName));
-
-                AudioFormat scvFormat = new AudioFormat(
-                        AudioFormat.Encoding.PCM_SIGNED,
-                        48000f,
-                        16,
-                        1,  // mono
-                        2,  // frame size = 2 bytes (16-bit)
-                        48000f,
-                        false  // little-endian
-                );
-
-                AudioInputStream scvAudio = AudioSystem.getAudioInputStream(scvFormat, rawAudio);
-
-                //create the audio broadcaster and add it to the list
-                broadcasters.add(new FrequencyBroadcaster(frequency, scvAudio.readAllBytes(), true, 0));
-
-                Radio.logger.info("Read Audio for " + frequency +" from : " + fileName);
-
-                scvAudio.close();
-                rawAudio.close();
+                FrequencyBroadcaster.startBroadcast(frequency, fileName, true, 100);
             }
             catch (Exception e)
             {
                 e.printStackTrace();
+            }
+        });
+    }
+
+    public static void stopBroadcast(String frequency)
+    {
+        //fill broadcaster up
+        broadcasters.removeIf(broadcaster -> {
+            if(broadcaster.frequency.equals(frequency))
+            {
+                broadcaster.stopPlaying();
+                return true;
+            }
+            return false;
+        });
+    }
+
+    public static void pauseBroadcast(String frequency)
+    {
+        //fill broadcaster up
+        broadcasters.forEach(broadcaster -> {
+            if(broadcaster.frequency.equals(frequency))
+            {
+                broadcaster.pause();
+            }
+        });
+    }
+
+    public static void resumeBroadcast(String frequency)
+    {
+        //fill broadcaster up
+        broadcasters.forEach(broadcaster -> {
+            if(broadcaster.frequency.equals(frequency))
+            {
+                broadcaster.resume();
             }
         });
     }
@@ -167,7 +171,9 @@ public class FrequencyManager {
 
         tagFrequency(result, frequency.toString());
 
-        result.lore(List.of(Component.text(displayFrequency.toString())));
+        result.lore(List.of(Component.text(
+                displayFrequency.toString()
+        ), Component.text("Craft With Dye to Retune Frequency", NamedTextColor.GOLD)));
 
         return result;
     }
@@ -205,7 +211,9 @@ public class FrequencyManager {
 
         tagFrequency(result, frequency.toString());
 
-        result.lore(List.of(Component.text(displayFrequency.toString())));
+        result.lore(List.of(Component.text(
+                displayFrequency.toString()
+        ), Component.text("Craft With Dye to Retune Frequency", NamedTextColor.GOLD)));
 
         return result;
     }
@@ -252,6 +260,10 @@ public class FrequencyManager {
         String mainFq = frequency.substring(0, splitFirstIndex);
 
         try {
+            //thirst
+            if(mainFq .equalsIgnoreCase("blue"))
+                return BossBar.Color.WHITE;
+
             return BossBar.Color.valueOf(mainFq);
         }
         catch (Exception e)
@@ -475,7 +487,7 @@ public class FrequencyManager {
         if(sender == null)
         {
             //this is not a player
-            if(senderId == FrequencyBroadcaster.brodcasterID)
+            if(senderId == FrequencyBroadcaster.broadcasterID)
             {
                 channelName = "Broadcast";
                 channelId = "broadcast";
@@ -506,8 +518,6 @@ public class FrequencyManager {
 
             channelId = idBuilder.toString();
             channelName = sender.getName();
-
-            Radio.logger.info(channelId);
         }
 
         // create the volume category for speakers.
